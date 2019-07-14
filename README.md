@@ -166,4 +166,11 @@ This repository documents my attempts at solving various practices of PicoCTF 20
 * There is a file in `executables` called `dontLookHere`. The `file` command is disabled - we cannot identify the type of file that it is.
 * It seems like it is an executable since it has the executable bits enabled and its directory name is also `executables`. However, trying to execute it results in an error message telling us that the file is not found - hmm.
 ![](/screenshots/acashella_dontLookHere.jpg)
-* To-be-continued...
+* So let us move onto the next directory, which has a bunch of files in it. The prompt told us to get rid of the files - let us try that. I will start by removing all of the files starting with the name `intel` (removing all of the files starting with the name `profile` works too):
+![](/screenshots/acashella_deletingSecretFiles.jpg)
+* Next, we type in the echo statement that was given to us, and it says to run the script in the `executables` directory.
+* We head back to the `executables` directory, and find that we are now able to run `dontLookHere`, which prints a whole screen of hexadecimal values. It says that we have to print the username to the screen - `whoami` does the trick:
+![](/screenshots/acashella_dontLookHereSuccess.jpg)
+* Next it says that we have to copy a file called TopSecret in tmp directory into the passwords folder: `cp /tmp/TopSecret passwords`. Heading to the passwords directory to view the file before our connection closes, we get our flag at the end of the paragraph of message!
+* The flag is `picoCTF{CrUsHeD_It_d6f202f1}`.
+* Here's where I did not have a successful run at the first go - I went into the passwords folder and ran `cp /tmp/TopSecret .` instead, and this did not work unfortunately.
