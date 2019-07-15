@@ -174,3 +174,51 @@ This repository documents my attempts at solving various practices of PicoCTF 20
 * Next it says that we have to copy a file called TopSecret in tmp directory into the passwords folder: `cp /tmp/TopSecret passwords`. Heading to the passwords directory to view the file before our connection closes, we get our flag at the end of the paragraph of message!
 * The flag is `picoCTF{CrUsHeD_It_d6f202f1}`.
 * Here's where I did not have a successful run at the first go - I went into the passwords folder and ran `cp /tmp/TopSecret .` instead, and this did not work unfortunately.
+
+# Client Side is Still Bad
+![](/screenshots/clientSideIsStillBad.jpg)
+* Accessing `http://2018shell.picoctf.com:8420/`, we see:
+![](/screenshots/clientSideIsStillBad_homepage.jpg)
+* Entering a random credential gives a pop-up box that says "Incorrect password".
+* Opening up the page source, we see the flag!
+![](/screenshots/clientSideIsStillBad_flag.jpg)
+* As expected, when we piece together the flag and submit it as the credential, we get a pop-up box that says "You got the flag!".
+* The flag is `picoCTF{client_is_bad_5e06ac}`.
+
+# Desrouleaux
+![](/screenshots/desrouleaux.jpg)
+* There is a file `incidents.json` that is given to us - opening it up reveals 10 ticket entries with data:
+![](/screenshots/desrouleaux_incidents.jpg)
+* Next, we connect with `nc 2018shell.picoctf.com 14079` and find ourselves facing 3 questions, before the flag is given to us.
+* The first and last question is the same across all attempts - but if you were to make another attempt because you got one of it wrong, you would probably be facing a different second question. No pressure on the time though - it did not timeout as fast as the one in Aca-Shell-A.
+* For the most common source IP address, `122.231.138.129` also counts as an answer because `210.205.230.140` and it both occurred 3 times. `93.124.108.240` occurred twice and the rest only appeared once.
+![](/screenshots/desrouleaux_flag.jpg)
+* The third question was a little tricky at first and I had to slow my reading down to ascertain that I had a correct understanding of the question. Doing the math, we find that there are 7 unique file hashes. 10 (no same file was sent to the same destination IP address twice) divided by 7 gives us ~1.428, which gives us 1.43 when rounded up.
+* The flag is `picoCTF{J4y_s0n_d3rUUUULo_4f3aae0d}`.
+
+# Logon
+![](/screenshots/logon.jpg)
+* This is what we see when we load `http://2018shell.picoctf.com:37861/`:
+![](/screenshots/logon_site.jpg)
+* I tried to login with `admin:password` and it tells us that we cannot get in that way.
+* Opening up the page source, we do not see much of any useful information lying around. There is an interesting comment describing what the different categories mean based on a set of colours, but not quite sure what this piece of information relates to at this point in time.
+![](/screenshots/logon_pagesource.jpg)
+* Next, I tried some random credentials and found out that no matter what we entered, we always managed to login, but we could not see the flag. The page source did not reveal anything once again.
+* I searched around for what was in the browser storage and found some interesting cookies!
+![](/screenshots/logon_pagesource.jpg)
+* Changing the value of `admin` cookie from False to True, and refreshing the page afterwards gave us our flag:
+![](/screenshots/logon_flag.jpg)
+* The flag is `picoCTF{l0g1ns_ar3nt_r34l_a280e12c}`.
+
+# Reading Between the Eyes
+![](/screenshots/readingbetweentheeyes.jpg)
+* Downloading the image file `husky.png` and opening it shows us a photo of a husky.
+* I ran `strings husky.png | grep picoCTF{` initially, just to confirm that we were not being tested on `strings` again, but found no result as expected. Removing the `grep` portion and going through the results did not yield anything either - just a bunch of random characters.
+* I did not click under the Hints section, but the challenge description in itself gave a big hint I suppose - `Stego-Saurus`. This should probably refer to steganography.
+* I tried an online steganography, but it tells me that either there was nothing encoded within it, or that I had entered the wrong password (I left this field blank when asked for it).
+* I tried several other means but to no avail - and after looking to those who had completed it, I realised that I had actually found the [correct online decoder](http://stylesuxx.github.io/steganography/)! I abanadoned it because my browser session hung for quite some time after pressing `Decode`. What was weirder is that this actually worked on my guest VM, while my main machine hung.
+![](/screenshots/readingbetweentheeyes_flag.jpg)
+* This [post](https://tcode2k16.github.io/blog/posts/picoctf-2018-writeup/forensics/) said that this problem is about using the Least Significant Bit algorithm for image steganography - the link he referenced was dead. Googling about this gave many research articles about this topic, but I found an [article by geeksforgeeks](https://www.geeksforgeeks.org/lsb-based-image-steganography-using-matlab/) being very helpful.
+* Alternatively, we can also use `zsteg` according to [another person](https://github.com/PlatyPew/picoctf-2018-writeup/tree/master/Forensics/Reading%20Between%20the%20Eyes).
+* **Learning point**: Think simple - I had always thought that steganography required a password, and there were tons of application out there using different methods to implement this. Without any more hints given in the challenge, it was very much probable that a simple form of steganography was used (which we found out eventually).
+* The flag is `picoCTF{r34d1ng_b37w33n_7h3_by73s}`.
