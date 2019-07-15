@@ -222,3 +222,25 @@ This repository documents my attempts at solving various practices of PicoCTF 20
 * Alternatively, we can also use `zsteg` according to [another person](https://github.com/PlatyPew/picoctf-2018-writeup/tree/master/Forensics/Reading%20Between%20the%20Eyes).
 * **Learning point**: Think simple - I had always thought that steganography required a password, and there were tons of application out there using different methods to implement this. Without any more hints given in the challenge, it was very much probable that a simple form of steganography was used (which we found out eventually).
 * The flag is `picoCTF{r34d1ng_b37w33n_7h3_by73s}`.
+
+# Recovering From the Snap
+![](/screenshots/recoveringfromthesnap.jpg)
+* Clicking on `animals` results in `animals.dd` being downloaded. Running `file` against it tells us that it is a DOS/MBR boot sector.
+* After seeing that the file is a boot sector, I tried to re-use my previous efforts [here](https://github.com/leegengyu/ctf-practice/blob/master/beginners-quest.md), but that did not quite work out because "NTFS signature is missing.".
+* I clicked onto the "Hint" which says that we should be looking into recovering files that were deleted from the disk image.
+* So off I went searching for a solution with the search string "recovering files from disk image kali". Besides a YouTube tutorial that popped up first, there was `foremost` - which is a "forensic program to recover lost files based on their headers, footers, and internal data structures"
+* I scrolled down the Kali tools page for the usage example, and used the same command - `foremost -t doc,jpg,pdf,xls -i animals.dd`.
+* The command finished execution almost instantly, and opening up the new directory `output`, and then into directory `jpg`, I opened each image file from the top of the list. Each photo was a high-resolution capture of an animal in an adorable manner. After reaching the 8th (and last) one, we got our flag:
+![](/screenshots/recoveringfromthesnap_flag.jpg)
+* Alternatives: There appears to be many ways to go about recovering the images based on what I read from how others solved this challenge, such as `binwalk`.
+* **Learning point**: This was something new for me - I had definitely learnt something here about using a tool to recover pictures.
+* The flag is `picoCTF{th3_5n4p_happ3n3d}`.
+
+# Admin Panel
+![](/screenshots/adminpanel.jpg)
+* Downloading the traffic file gives us `data.pcap`. Traffic here refers to Wireshark traffic.
+* Opening up the file in Wireshark, we find 78 packets captured, with only 3 protocols involved - ARP, HTTP and TCP.
+* We do not have to manually search for the flag here - simply enter `picoCTF{` into the search fields - set the search type to be `String` and to search `Packet bytes`. There will only be 1 result, which contains our flag:
+![](/screenshots/adminpanel.jpg)
+* Note to self: I made a mistake earlier in the searching to seach under `Packet details`, having this mistaken idea that it would definitely be there. I was also thrown off-guard by another set of credentials that I had found `jimmy:p4ssw0rd`, where the password had turned out to be incorrect.
+* The flag is `picoCTF{n0ts3cur3_894a6546}`.
